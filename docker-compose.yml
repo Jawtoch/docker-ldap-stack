@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  server:
+    image: 'osixia/openldap'
+    privileged: true
+    ports:
+      - 389:389
+      - 636:636
+    environment:
+      LDAP_ORGANISATION: "Ugo Cottin"
+      LDAP_DOMAIN: "ugocottin.fr"
+      LDAP_ADMIN_PASSWORD: "foobar"
+      LDAP_CONFIG_PASSWORD: "config"
+      LDAP_BASE_DN: ""
+    volumes:
+      - './data/db:/var/lib/ldap'
+      - './data/config:/etc/ldap/slapd.d'
+  admin_panel:
+    image: 'osixia/phpldapadmin'
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: server
+      PHPLDAPADMIN_HTTPS: false
+    ports:
+      - 8080:80
+    depends_on:
+      - server
